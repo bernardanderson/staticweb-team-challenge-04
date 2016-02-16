@@ -18,3 +18,12 @@ body {
   font-size: 2rem;
   font-weight: bold;
 }
+
+.button {
+  display: block;
+  flex-basis: 25%;
+  height: 50px;
+  font-size: 1.3rem;
+  background-color: lightgray;
+  border: 1px solid black;
+}

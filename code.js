@@ -6,18 +6,26 @@ function createGrid() {
   for (var i = 0; i < 9; i++) {
     var divItem = document.createElement("div");
     var jsScript = document.getElementsByTagName("script");
-    divItem.id = "grid-" + i;
     divItem.classList.add("grid-item");
     mainBody[0].insertBefore(divItem, jsScript[0]);
+    console.log("Div Items", divItem);
   }
 }
 
 // This adds click events to all grid divs so when clicked, an X or O will be added
 function addClickEvents() {
   var divItem = document.getElementsByClassName("grid-item");
-    for (var i = 0; i < 9; i++) {
-      divItem[i].addEventListener("click",addXO);
-    }
+  for (var i = 0; i < 9; i++) {
+    divItem[i].addEventListener("click",addXO);
+  }
+}
+
+// This removes all click events from the program
+function removeAllClickEvents() {
+  var divItem = document.getElementsByClassName("grid-item");
+  for (var i = 0; i < 9; i++) {
+    divItem[i].removeEventListener("click",addXO);
+  }
 }
 
 // This function adds an X or O based on the number of click recorded so far
@@ -26,10 +34,12 @@ function addClickEvents() {
 function addXO() {
   if (numberOfClicks % 2 === 0) {
     this.classList.add("X");
+    this.style.color = "red";
     this.innerText = "X";
     numberOfClicks++;
   } else {
     this.classList.add("O");
+    this.style.color = "blue";
     this.innerText = "O";
     numberOfClicks++;
   }
@@ -58,8 +68,19 @@ function checkXO(divCheckX, divCheckO, firstGrid, secondGrid, thirdGrid) {
     var oCheck = divCheckO[firstGrid] && divCheckO[secondGrid] && divCheckO[thirdGrid];
     if (xCheck) {
       alert("You Won X");
+      numberOfClicks = 0;
+      removeAllClickEvents();
+      addPlayAgainButton();
     } else if (oCheck) {
       alert("You Won O");
+      numberOfClicks = 0;
+      removeAllClickEvents();
+      addPlayAgainButton();
+    } else if (numberOfClicks === 9) {
+      alert("It's a tie");
+      numberOfClicks = 0;
+      removeAllClickEvents();
+      addPlayAgainButton();
     }
 }
 
@@ -93,7 +114,36 @@ function checkDiagonal(divCheckX, divCheckO) {
   }
 }
 
-createGrid();
-addClickEvents();
+// This adds the PlayAgainButton for a win or tie.  And ties a click event to it
+//  to reset the board
+function addPlayAgainButton() {
 
+  var mainBody = document.getElementsByTagName("body");
+    var playAgainButton = document.createElement("p");
+    playAgainButton.innerText = "**PLAY AGAIN**";
+    var jsScript = document.getElementsByTagName("script");
+    playAgainButton.classList.add("button");
+    mainBody[0].insertBefore(playAgainButton, jsScript[0]);
+    playAgainButton.addEventListener("click", resetGame);
+}
+
+// This checks the body child elements and deletes everything but the <script> tag
+//  Effectively, resetting the grid.
+function resetGrid() {
+  var mainBody = document.getElementsByTagName("body");
+  var lengthOfChildren = mainBody[0].childElementCount ;
+  console.log("ElementCount", lengthOfChildren);
+  for (var i = 1; i < lengthOfChildren; i++) {
+    mainBody[0].removeChild(mainBody[0].firstChild);
+  }
+}
+
+// This runs all the major setup functions
+function resetGame() {
+  resetGrid();
+  createGrid();
+  addClickEvents();
+}
+
+resetGame();
 // 5. if won, turn off click events, add "reset" button, alert box for winner
