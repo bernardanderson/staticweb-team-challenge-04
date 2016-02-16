@@ -58,6 +58,17 @@ function buildXOArray() {
   checkHorizontal(divCheckX, divCheckO);
   checkVertical(divCheckX, divCheckO);
   checkDiagonal(divCheckX, divCheckO);
+  if (numberOfClicks === 9) {
+    checkTie();
+  }
+}
+
+function addWinnerToDom(winMessage) {
+  var mainBody = document.getElementsByTagName("body");
+  var jsScript = document.getElementsByTagName("script");
+  var winDisplay = document.createElement("p");
+  winDisplay.innerText = winMessage;
+  mainBody[0].insertBefore(winDisplay, jsScript[0]);
 }
 
 // The vanilla check grid which looks to see if the either X or O has three in a row
@@ -77,23 +88,14 @@ function checkXO(divCheckX, divCheckO, firstGrid, secondGrid, thirdGrid) {
     }
   ];
 
-  for (var i = 0; i < 3; i++) {
-      if (itemCheck[i].itemTrue) {
-        numberOfClicks = 0;
-        console.log("itemCheck"+i, itemCheck[i].itemTrue);
-        addWinnerToDom(itemCheck[i].winMessage);
-        addPlayAgainButton();
-        break;
-      }
+  for (var i = 0; i < 2; i++) {
+    if (itemCheck[i].itemTrue) {
+      numberOfClicks = 0;
+      console.log("itemCheck"+i, itemCheck[i].itemTrue);
+      addWinnerToDom(itemCheck[i].winMessage);
+      addPlayAgainButton();
+    }
   }
-}
-
-function addWinnerToDom(winMessage) {
-  var mainBody = document.getElementsByTagName("body");
-  var jsScript = document.getElementsByTagName("script");
-  var winDisplay = document.createElement("p");
-  winDisplay.innerText = winMessage;
-  mainBody[0].insertBefore(winDisplay, jsScript[0]);
 }
 
 // This checks the grids for three in a row horizontally
@@ -124,6 +126,12 @@ function checkDiagonal(divCheckX, divCheckO) {
     var thirdGrid = 8 - 2*i;
     checkXO(divCheckX, divCheckO, firstGrid, secondGrid, thirdGrid);
   }
+}
+
+function checkTie() {
+  numberOfClicks = 0;
+  addWinnerToDom("It's a tie!");
+  addPlayAgainButton();
 }
 
 // This adds the PlayAgainButton for a win or tie.  And ties a click event to it
