@@ -8,7 +8,6 @@ function createGrid() {
     var jsScript = document.getElementsByTagName("script");
     divItem.classList.add("grid-item");
     mainBody[0].insertBefore(divItem, jsScript[0]);
-    console.log("Div Items", divItem);
   }
 }
 
@@ -36,19 +35,18 @@ function addXO() {
     this.classList.add("X");
     this.style.color = "red";
     this.innerText = "X";
-    numberOfClicks++;
   } else {
     this.classList.add("O");
     this.style.color = "blue";
     this.innerText = "O";
-    numberOfClicks++;
   }
   this.removeEventListener("click", addXO);
-  threeInARow();
+  numberOfClicks++;
+  buildXOArray();
 }
 
 // This creates an array of X's and O's from the classes within each grid div
-function threeInARow() {
+function buildXOArray() {
   var divItem = document.getElementsByTagName("div");
   var divCheckX = [];
   var divCheckO = [];
@@ -64,24 +62,38 @@ function threeInARow() {
 
 // The vanilla check grid which looks to see if the either X or O has three in a row
 function checkXO(divCheckX, divCheckO, firstGrid, secondGrid, thirdGrid) {
-    var xCheck = divCheckX[firstGrid] && divCheckX[secondGrid] && divCheckX[thirdGrid];
-    var oCheck = divCheckO[firstGrid] && divCheckO[secondGrid] && divCheckO[thirdGrid];
-    if (xCheck) {
-      alert("You Won X");
-      numberOfClicks = 0;
-      removeAllClickEvents();
-      addPlayAgainButton();
-    } else if (oCheck) {
-      alert("You Won O");
-      numberOfClicks = 0;
-      removeAllClickEvents();
-      addPlayAgainButton();
-    } else if (numberOfClicks === 9) {
-      alert("It's a tie");
-      numberOfClicks = 0;
-      removeAllClickEvents();
-      addPlayAgainButton();
+  var xCheck = divCheckX[firstGrid] && divCheckX[secondGrid] && divCheckX[thirdGrid];
+  var oCheck = divCheckO[firstGrid] && divCheckO[secondGrid] && divCheckO[thirdGrid];
+
+  var itemCheck = [
+    { itemTrue: xCheck,
+      winMessage: "You Won X!",
+    },
+    { itemTrue: oCheck,
+      winMessage: "You Won O!",
+    },
+    { itemTrue: numberOfClicks === 9,
+      winMessage: "It's a tie!",
     }
+  ];
+
+  for (var i = 0; i < 3; i++) {
+      if (itemCheck[i].itemTrue) {
+        numberOfClicks = 0;
+        console.log("itemCheck"+i, itemCheck[i].itemTrue);
+        addWinnerToDom(itemCheck[i].winMessage);
+        addPlayAgainButton();
+        break;
+      }
+  }
+}
+
+function addWinnerToDom(winMessage) {
+  var mainBody = document.getElementsByTagName("body");
+  var jsScript = document.getElementsByTagName("script");
+  var winDisplay = document.createElement("p");
+  winDisplay.innerText = winMessage;
+  mainBody[0].insertBefore(winDisplay, jsScript[0]);
 }
 
 // This checks the grids for three in a row horizontally
@@ -132,7 +144,6 @@ function addPlayAgainButton() {
 function resetGrid() {
   var mainBody = document.getElementsByTagName("body");
   var lengthOfChildren = mainBody[0].childElementCount ;
-  console.log("ElementCount", lengthOfChildren);
   for (var i = 1; i < lengthOfChildren; i++) {
     mainBody[0].removeChild(mainBody[0].firstChild);
   }
@@ -146,4 +157,3 @@ function resetGame() {
 }
 
 resetGame();
-// 5. if won, turn off click events, add "reset" button, alert box for winner

@@ -19,6 +19,10 @@ body {
   font-weight: bold;
 }
 
+p {
+  flex-basis: 95%;
+}
+
 .button {
   display: block;
   flex-basis: 25%;
