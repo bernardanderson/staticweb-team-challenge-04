@@ -1,6 +1,8 @@
+// Inits a global variable to keep track of the number of click events captured.  Used in
+//  determining X and O and if the game ends in a tie.
 var numberOfClicks = 0;
 
-// Creates a 9 divs as containers for the Tic-Tac-Toe grid
+// Creates 9 divs as containers for the Tic-Tac-Toe grid
 function createGrid() {
   var mainBody = document.getElementsByTagName("body");
   for (var i = 0; i < 9; i++) {
@@ -19,8 +21,8 @@ function addClickEvents() {
   }
 }
 
-// This removes all click events from the program
-function removeAllClickEvents() {
+// This removes all div click events from the program, after the game has ended.
+function removeAllDivClickEvents() {
   var divItem = document.getElementsByClassName("grid-item");
   for (var i = 0; i < 9; i++) {
     divItem[i].removeEventListener("click",addXO);
@@ -28,7 +30,7 @@ function removeAllClickEvents() {
 }
 
 // This function adds an X or O based on the number of click recorded so far
-//  It puts the X or O text in the clicked div
+//  and puts the X or O text in the clicked div and inline styles the color. 
 //  It also removes the listenerEvent so the user can't keep clicking the same div 
 function addXO() {
   if (numberOfClicks % 2 === 0) {
@@ -45,24 +47,30 @@ function addXO() {
   buildXOArray();
 }
 
-// This creates an array of X's and O's from the classes within each grid div
+// This creates an array of X's and O's from the classes within each grid div and sends them
+//  to the check functions to see if there is a winner.
 function buildXOArray() {
   var divItem = document.getElementsByTagName("div");
   var divCheckX = [];
   var divCheckO = [];
 
+  // for loop send Booleans to X/O arrays if the divs contain the X or O class
   for (var i = 0; i < 9; i++) {
     divCheckX.push(divItem[i].classList.contains("X"));
     divCheckO.push(divItem[i].classList.contains("O"));
   }
+  
   checkHorizontal(divCheckX, divCheckO);
   checkVertical(divCheckX, divCheckO);
   checkDiagonal(divCheckX, divCheckO);
+
+  // This checks if there is a tie.
   if (numberOfClicks === 9) {
-    checkTie();
+    reportTie();
   }
 }
 
+// When a winner is had, this inserts the message into a p tag in the DOM
 function addWinnerToDom(winMessage) {
   var mainBody = document.getElementsByTagName("body");
   var jsScript = document.getElementsByTagName("script");
@@ -71,7 +79,8 @@ function addWinnerToDom(winMessage) {
   mainBody[0].insertBefore(winDisplay, jsScript[0]);
 }
 
-// The vanilla check grid which looks to see if the either X or O has three in a row
+// This checks the grid and looks at the X and O grid array to see if the either X or O has 
+//  three in a row.  If so it calls the winner report function.
 function checkXO(divCheckX, divCheckO, firstGrid, secondGrid, thirdGrid) {
   var xCheck = divCheckX[firstGrid] && divCheckX[secondGrid] && divCheckX[thirdGrid];
   var oCheck = divCheckO[firstGrid] && divCheckO[secondGrid] && divCheckO[thirdGrid];
@@ -82,23 +91,21 @@ function checkXO(divCheckX, divCheckO, firstGrid, secondGrid, thirdGrid) {
     },
     { itemTrue: oCheck,
       winMessage: "You Won O!",
-    },
-    { itemTrue: numberOfClicks === 9,
-      winMessage: "It's a tie!",
     }
   ];
 
   for (var i = 0; i < 2; i++) {
     if (itemCheck[i].itemTrue) {
       numberOfClicks = 0;
-      console.log("itemCheck"+i, itemCheck[i].itemTrue);
       addWinnerToDom(itemCheck[i].winMessage);
+      removeAllDivClickEvents();
       addPlayAgainButton();
     }
   }
 }
 
-// This checks the grids for three in a row horizontally
+// This checks the grid for three in a row horizontally
+//  The loop checks grids: 0/1/2, 3/4/5, 6/7/8
 function checkHorizontal(divCheckX, divCheckO) {
   for (var i = 0; i < 3; i++) {
     var firstGrid = 0 + 3*i;
@@ -108,7 +115,8 @@ function checkHorizontal(divCheckX, divCheckO) {
   }
 }
 
-// This checks the grids for three in a row vertically
+// This checks the grid for three in a row vertically
+//  The loop checks grids: 0/3/6, 1/4/7, 2/5/8
 function checkVertical(divCheckX, divCheckO) {
   for (var i = 0; i < 3; i++) {
     var firstGrid = 0 + 1*i;
@@ -118,7 +126,8 @@ function checkVertical(divCheckX, divCheckO) {
   }
 }
 
-// This checks the grids for three in a row diagonally
+// This checks the grid for three in a row diagonally
+//  The loop checks grids: 0/4/8, 2/4/6
 function checkDiagonal(divCheckX, divCheckO) {
   for (var i = 0; i < 2; i++) {
     var firstGrid = 0 + 2*i;
@@ -128,16 +137,15 @@ function checkDiagonal(divCheckX, divCheckO) {
   }
 }
 
-function checkTie() {
+// This reports if there is a tie.
+function reportTie() {
   numberOfClicks = 0;
   addWinnerToDom("It's a tie!");
   addPlayAgainButton();
 }
 
-// This adds the PlayAgainButton for a win or tie.  And ties a click event to it
-//  to reset the board
+// This adds the PlayAgainButton for a win or tie. Opens a click event to reset the board
 function addPlayAgainButton() {
-
   var mainBody = document.getElementsByTagName("body");
     var playAgainButton = document.createElement("p");
     playAgainButton.innerText = "**PLAY AGAIN**";
@@ -148,7 +156,7 @@ function addPlayAgainButton() {
 }
 
 // This checks the body child elements and deletes everything but the <script> tag
-//  Effectively, resetting the grid.
+//  Effectively, clearing/resetting the grid.
 function resetGrid() {
   var mainBody = document.getElementsByTagName("body");
   var lengthOfChildren = mainBody[0].childElementCount ;
@@ -157,7 +165,7 @@ function resetGrid() {
   }
 }
 
-// This runs all the major setup functions
+// This runs all the major setup functions to reset and create a new game
 function resetGame() {
   resetGrid();
   createGrid();
