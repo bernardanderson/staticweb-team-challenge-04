@@ -52,18 +52,24 @@ function threeInARow() {
   checkDiagonal(divCheckX, divCheckO);
 }
 
+// The vanilla check grid which looks to see if the either X or O has three in a row
+function checkXO(divCheckX, divCheckO, firstGrid, secondGrid, thirdGrid) {
+    var xCheck = divCheckX[firstGrid] && divCheckX[secondGrid] && divCheckX[thirdGrid];
+    var oCheck = divCheckO[firstGrid] && divCheckO[secondGrid] && divCheckO[thirdGrid];
+    if (xCheck) {
+      alert("You Won X");
+    } else if (oCheck) {
+      alert("You Won O");
+    }
+}
+
 // This checks the grids for three in a row horizontally
 function checkHorizontal(divCheckX, divCheckO) {
   for (var i = 0; i < 3; i++) {
     var firstGrid = 0 + 3*i;
     var secondGrid = 1 + 3*i;
     var thirdGrid = 2 + 3*i;
-
-    var firstCheck = divCheckX[firstGrid] && divCheckX[secondGrid] && divCheckX[thirdGrid];
-    if (firstCheck) {
-      alert("You Won");
-      break;
-    }
+    checkXO(divCheckX, divCheckO, firstGrid, secondGrid, thirdGrid);
   }
 }
 
@@ -73,12 +79,7 @@ function checkVertical(divCheckX, divCheckO) {
     var firstGrid = 0 + 1*i;
     var secondGrid = 3 + 1*i;
     var thirdGrid = 6 + 1*i;
-
-    var firstCheck = divCheckX[firstGrid] && divCheckX[secondGrid] && divCheckX[thirdGrid];
-    if (firstCheck) {
-      alert("You Won");
-      break;
-    }
+    checkXO(divCheckX, divCheckO, firstGrid, secondGrid, thirdGrid);
   }
 }
 
@@ -88,12 +89,7 @@ function checkDiagonal(divCheckX, divCheckO) {
     var firstGrid = 0 + 2*i;
     var secondGrid = 4;
     var thirdGrid = 8 - 2*i;
-
-    var firstCheck = divCheckX[firstGrid] && divCheckX[secondGrid] && divCheckX[thirdGrid];
-    if (firstCheck) {
-      alert("You Won");
-      break;
-    }
+    checkXO(divCheckX, divCheckO, firstGrid, secondGrid, thirdGrid);
   }
 }
 
