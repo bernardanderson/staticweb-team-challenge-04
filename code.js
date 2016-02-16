@@ -1,6 +1,6 @@
 var numberOfClicks = 0;
 
-// 1. Flexbox with 3x3 stack of divs
+// Creates a 9 divs as containers for the Tic-Tac-Toe grid
 function createGrid() {
   var mainBody = document.getElementsByTagName("body");
   for (var i = 0; i < 9; i++) {
@@ -12,6 +12,7 @@ function createGrid() {
   }
 }
 
+// This adds click events to all grid divs so when clicked, an X or O will be added
 function addClickEvents() {
   var divItem = document.getElementsByClassName("grid-item");
     for (var i = 0; i < 9; i++) {
@@ -19,25 +20,84 @@ function addClickEvents() {
     }
 }
 
+// This function adds an X or O based on the number of click recorded so far
+//  It puts the X or O text in the clicked div
+//  It also removes the listenerEvent so the user can't keep clicking the same div 
 function addXO() {
-  var XorO = document.createElement("p");
-  XorO.classList.add("X");
   if (numberOfClicks % 2 === 0) {
-    XorO.innerText = "X";
+    this.classList.add("X");
+    this.innerText = "X";
     numberOfClicks++;
   } else {
-    XorO.innerText = "O";
+    this.classList.add("O");
+    this.innerText = "O";
     numberOfClicks++;
   }
-  this.appendChild(XorO);
   this.removeEventListener("click", addXO);
+  threeInARow();
+}
+
+// This creates an array of X's and O's from the classes within each grid div
+function threeInARow() {
+  var divItem = document.getElementsByTagName("div");
+  var divCheckX = [];
+  var divCheckO = [];
+
+  for (var i = 0; i < 9; i++) {
+    divCheckX.push(divItem[i].classList.contains("X"));
+    divCheckO.push(divItem[i].classList.contains("O"));
+  }
+  checkHorizontal(divCheckX, divCheckO);
+  checkVertical(divCheckX, divCheckO);
+  checkDiagonal(divCheckX, divCheckO);
+}
+
+// This checks the grids for three in a row horizontally
+function checkHorizontal(divCheckX, divCheckO) {
+  for (var i = 0; i < 3; i++) {
+    var firstGrid = 0 + 3*i;
+    var secondGrid = 1 + 3*i;
+    var thirdGrid = 2 + 3*i;
+
+    var firstCheck = divCheckX[firstGrid] && divCheckX[secondGrid] && divCheckX[thirdGrid];
+    if (firstCheck) {
+      alert("You Won");
+      break;
+    }
+  }
+}
+
+// This checks the grids for three in a row vertically
+function checkVertical(divCheckX, divCheckO) {
+  for (var i = 0; i < 3; i++) {
+    var firstGrid = 0 + 1*i;
+    var secondGrid = 3 + 1*i;
+    var thirdGrid = 6 + 1*i;
+
+    var firstCheck = divCheckX[firstGrid] && divCheckX[secondGrid] && divCheckX[thirdGrid];
+    if (firstCheck) {
+      alert("You Won");
+      break;
+    }
+  }
+}
+
+// This checks the grids for three in a row diagonally
+function checkDiagonal(divCheckX, divCheckO) {
+  for (var i = 0; i < 2; i++) {
+    var firstGrid = 0 + 2*i;
+    var secondGrid = 4;
+    var thirdGrid = 8 - 2*i;
+
+    var firstCheck = divCheckX[firstGrid] && divCheckX[secondGrid] && divCheckX[thirdGrid];
+    if (firstCheck) {
+      alert("You Won");
+      break;
+    }
+  }
 }
 
 createGrid();
 addClickEvents();
 
-//1a. 
-// 2. counter to keep track of current click
-// 3. "this" for adding alternating x/o
-// 4. if's to check for x or o in a line
 // 5. if won, turn off click events, add "reset" button, alert box for winner
